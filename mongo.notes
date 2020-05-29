@@ -1,0 +1,83 @@
+
+Modified BindIp from 127.0.0.1 to Actual IP(hostname -i) of server to allow connections from other servers/clients
+
+[root@node01 ~]# systemctl stop mongod.service && systemctl start mongod.service
+
+####created the db using
+
+use newrelic
+
+##### created the user with dbAdmin, and readwrite roles
+
+db.createUser(
+   {
+     user: "admin",
+     pwd: "admin123",
+     roles: [ "readWrite", "dbAdmin" ]
+   }
+);
+
+## List Databases
+
+> show dbs
+admin     0.000GB
+config    0.000GB
+local     0.000GB
+newrelic  0.000GB
+
+## Switch to a Database
+
+use newrelic
+
+## Create table/collection with data
+db.posts.insert({
+...   name: "Bhanu",
+...   age: 40,
+...   website: "beginnersbook.com"
+... })
+
+db.reviews.insert({
+...   name: "Bhanu",
+...   age: 40,
+...   website: "beginnersbook.com"
+... })
+
+## Show tables/collections
+> show collections
+posts
+reviews
+
+> show tables
+posts
+reviews
+
+## Show data inside collection or table
+> db.reviews.find()
+{ "_id" : 1, "name" : "Big Salty Inc", "rating" : 2, "cuisine" : "Sushi Bar" }
+{ "_id" : 2, "name" : "Sandwich Kitchen Corporation", "rating" : 4, "cuisine" : "Vegetarian" }
+{ "_id" : 3, "name" : "Goat Kitchen LLC", "rating" : 5, "cuisine" : "Bar Food" }
+
+## Delete tables/collections
+> db.posts.drop()
+true
+> db.reviews.drop()
+true
+### Exclude _id from output
+db_alerts.find({},({_id : 0,alrert_id:1}))
+{ "alrert_id" : 917790120 }
+{ "alrert_id" : 917790219 }
+
+### Sort decender ordre and results set limit to 1
+
+db.all_db_alerts.find({},({_id:1})).sort({_id:-1}).limit(1)
+{ "_id" : 1 }
+
+## Add role to a use
+db.grantRolesToUser( "admin", [ { role: "dbOwner", db: "newrelic" } ])
+## Revoke a role from user
+
+db.revokeRolesFromUser( "admin",[ { role: "dbOwner", db: "newrelic" } ]);
+
+## Check the conntion statu
+ db.runCommand({connectionStatus : 1})
+
